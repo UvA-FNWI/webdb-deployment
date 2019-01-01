@@ -1,0 +1,4 @@
+templates/phpMyAdmin/*
+templates/*.tar.gz
+webdb.key*
+*.retry

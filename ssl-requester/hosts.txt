@@ -1,0 +1,2 @@
+host1.domain.tld
+host2.domain.tld

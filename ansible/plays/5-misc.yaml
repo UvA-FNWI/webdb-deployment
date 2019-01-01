@@ -1,0 +1,47 @@
+---
+- hosts: test
+  tasks:  
+   - name: Enable pam_umask.so
+     lineinfile:
+       path: /etc/pam.d/common-session
+       line: session optional pam_umask.so
+
+   - name: Set umask to 022
+     lineinfile:
+       path: '/etc/login.defs'
+       regexp: 'UMASK'
+       line: 'UMASK 002'
+       state: present
+
+   - name: Make /var/www writable for users
+     file:
+        path: /var/www
+        group: users
+        mode: 'g+w'
+
+   - name: Make /var/www/html + children writable for users
+     file:
+        path: /var/www/html
+        group: users
+        recurse: yes
+        mode: 'g+w'
+
+   - name: Install sudo
+     apt: name=sudo state=present
+
+   - name: Enable users to sudo
+     lineinfile:
+       path: /etc/sudoers
+       line: '%users	ALL=(ALL:ALL) ALL'
+
+
+   - name: copy motd
+     copy: 
+       src: ../templates/misc/motd_webdb.txt
+       dest: /etc/motd
+       owner: root
+       group: root
+       mode: 0644
+
+   - name: lock root account
+     command: passwd --lock root

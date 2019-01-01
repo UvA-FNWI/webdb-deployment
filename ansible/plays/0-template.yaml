@@ -1,0 +1,20 @@
+---
+- hosts: template
+  tasks:
+   - name: enable dutch locale
+     locale_gen:
+       name: nl_NL.UTF-8
+       state: present
+  
+   - name: install general packages
+     apt:
+       name:
+         - apt-transport-https
+         - vim
+         - curl
+         - git
+         - unzip
+         - whois
+         - net-tools
+         - dnsutils
+       state: latest

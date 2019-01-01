@@ -1,0 +1,36 @@
+---
+- hosts: test
+  tasks:   
+   - name: add MysQL repository key
+     apt_key:
+      keyserver: pgp.surfnet.nl
+      id: 5072E1F5
+      state: present
+   - name: install MySQL repository
+     apt_repository:
+        repo: deb https://repo.mysql.com/apt/debian {{ansible_distribution_release}} mysql-8.0
+        state: present
+
+   - name: Set MySQL root password
+     debconf: name='mysql-community-server' question='mysql-community-server/root-pass' value='{{ mysql_root_password }}' vtype='password'
+
+   - name: Confirm MySQL root password
+     debconf: name='mysql-community-server' question='mysql-community-server/re-root-pass' value='{{ mysql_root_password }}' vtype='password'
+
+   - name: 'Install mysql-server'
+     apt:
+       name: mysql-community-server
+       state: latest
+     environment:
+       DEBIAN_FRONTEND: noninteractive
+
+   - name: 'Configure MySQL server'
+     copy: 
+       src: ../templates/mysql/webdb.cnf
+       dest: /etc/mysql/mysql.conf.d/webdb.cnf
+     notify:
+       - restart mysql
+
+  handlers:
+   - name: restart mysql
+     service: name=mysql state=restarted

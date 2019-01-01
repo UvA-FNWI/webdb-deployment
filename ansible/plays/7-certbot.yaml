@@ -1,0 +1,15 @@
+---
+- hosts: test
+  tasks:
+
+   - name: add backports repository
+     apt_repository:
+       repo: deb http://ftp.debian.org/debian stretch-backports main
+       state: present
+
+   - name: Install certbot
+     apt:
+       name: python-certbot-apache
+       state: latest
+       default_release: stretch-backports
+       update_cache: yes

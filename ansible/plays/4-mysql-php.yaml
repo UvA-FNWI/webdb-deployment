@@ -1,0 +1,29 @@
+---
+- hosts: test
+  tasks:
+    - name: install extension
+      apt: name=php7.3-mysql state=present
+      notify:
+        - restart apache2
+
+    - name: unzip phpmyadmin
+      unarchive: src=../templates/phpmyadmin/pma.tar.gz dest=/var/www creates=/var/www/phpMyAdmin owner=root group=root
+
+
+    - name: create pma temp directory
+      file:
+        name: /var/www/phpMyAdmin/tmp
+        state: directory
+        mode: 0777
+
+    - name: configure phpmyadmin
+      template: 
+        src: ../templates/phpmyadmin/config.inc.php.j2
+        dest: /var/www/phpMyAdmin/config.inc.php
+        owner: root
+        group: root
+        mode: 0644
+
+  handlers:
+   - name: restart apache2
+     service: name=apache2 state=restarted

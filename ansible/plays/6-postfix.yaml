@@ -1,0 +1,18 @@
+---
+- hosts: test
+  tasks:  
+    - name: install postfix
+      apt: name=postfix state=present
+    
+    - name: disable listening on port 25
+      lineinfile:
+        path: '/etc/postfix/main.cf'
+        regexp: 'inet_interfaces'
+        line: 'inet_interfaces = loopback-only'
+        state: present
+      notify:
+        - restart postfix
+
+  handlers:
+   - name: restart postfix
+     service: name=postfix state=restarted

@@ -1,0 +1,52 @@
+---
+- hosts: test
+  tasks:
+    - name: Delete standard vhosts
+      file: path=/etc/apache2/sites-available/000-default.conf state=absent
+
+    - name: Delete standard vhosts
+      file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
+
+    - name: Delete default ssl
+      file: path=/etc/apache2/sites-available/default-ssl.conf state=absent
+
+    - name: create virtual host file
+      template: src=../templates/apache/site.conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn|replace(".","_")}}.conf
+
+    - name: create uva-directory
+      file: path=/etc/ssl/uva state=directory
+
+    - name: copy ssl certificate
+      copy: 
+        src: ../../certificates/{{ ansible_fqdn|replace(".","_")}}/{{ ansible_fqdn|replace(".","_")}}.crt
+        dest: /etc/ssl/uva/{{ ansible_fqdn|replace(".","_")}}.crt
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: copy ssl certificate key
+      copy: 
+        src: ../../certificates/{{ ansible_fqdn|replace(".","_")}}/{{ ansible_fqdn|replace(".","_")}}.key
+        dest: /etc/ssl/uva/{{ ansible_fqdn|replace(".","_")}}.key
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: copy chain certificate
+      copy:
+        src: ../../certificates/{{ ansible_fqdn|replace(".","_")}}/DigiCertCA.crt
+        dest: /etc/ssl/uva/DigiCertCA.crt
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: enable ssl module
+      apache2_module: name=ssl state=present
+    - name: enable default site
+      command: a2ensite {{ ansible_fqdn|replace(".","_")}}
+      notify:
+        - restart apache2
+
+  handlers:
+   - name: restart apache2
+     service: name=apache2 state=restarted

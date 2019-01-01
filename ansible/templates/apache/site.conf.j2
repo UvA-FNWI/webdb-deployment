@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+    DocumentRoot /var/www/html
+    ServerName {{ ansible_fqdn }}
+
+    Alias /phpmyadmin /var/www/phpMyAdmin
+</VirtualHost>
+
+<VirtualHost *:443>
+    DocumentRoot /var/www/html
+    ServerName {{ ansible_fqdn }}
+
+    SSLCertificateFile /etc/ssl/uva/{{ ansible_fqdn|replace(".","_") }}.crt
+    SSLCertificateKeyFile /etc/ssl/uva/{{ ansible_fqdn|replace(".","_") }}.key
+    SSLCertificateChainFile /etc/ssl/uva/DigiCertCA.crt
+
+    Alias /phpmyadmin /var/www/phpMyAdmin
+</VirtualHost>

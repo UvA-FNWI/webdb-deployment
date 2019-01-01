@@ -1,0 +1,63 @@
+---
+- hosts: test
+  tasks:
+
+   - name: add PHP repository key
+     apt_key:
+      url: https://packages.sury.org/php/apt.gpg
+      state: present
+   - name: add PHP repository
+     apt_repository:
+       repo: deb https://packages.sury.org/php/ {{ansible_distribution_release}} main
+       state: present
+   - name: install apache + php 7.3 + extensions
+     apt:
+       name:
+         - apache2
+         - php7.3
+         - php7.3-mbstring
+         - php7.3-curl
+         - php7.3-json
+         - php7.3-xml
+         - php7.3-zip
+       state: present
+
+   - name: php configuration (apache2)
+     copy: 
+        src: ../templates/php/30-webdb.ini
+        dest: /etc/php/7.3/apache2/conf.d/30-webdb.ini
+   - name: php configuration (cli)
+     copy: 
+        src: ../templates/php/30-webdb.ini
+        dest: /etc/php/7.3/cli/conf.d/30-webdb.ini
+
+   - name: php apache-mod configuration
+     copy:
+        src: ../templates/php/php7.3.conf
+        dest: /etc/apache2/mods-available/php7.3.conf
+
+   - name: copy homepage
+     copy:
+        src: ../templates/apache/webdb.html
+        dest: /var/www/html/index.html
+
+   - name: enable rewrite module
+     apache2_module: name=rewrite state=present
+
+   - name: enable userdir module
+     apache2_module: name=userdir state=present
+
+
+   - name: copy apache configuration
+     copy:
+       src: ../templates/apache/webdb.conf
+       dest: /etc/apache2/conf-available/webdb.conf
+
+   - name: enable apache configuration
+     command: a2enconf webdb
+     notify:
+       - restart apache2
+
+  handlers:
+   - name: restart apache2
+     service: name=apache2 state=restarted

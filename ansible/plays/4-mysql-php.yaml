@@ -24,6 +24,9 @@
         group: root
         mode: 0644
 
+    - name: Enable http->https redirect
+      copy: src=../templates/phpmyadmin/.htaccess dest=/var/www/phpMyAdmin/.htaccess owner=root group=root mode=0644
+
   handlers:
    - name: restart apache2
      service: name=apache2 state=restarted

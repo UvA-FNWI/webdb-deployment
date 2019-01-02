@@ -37,7 +37,7 @@
 
    - name: copy motd
      copy: 
-       src: ../templates/misc/motd_webdb.txt
+       src: ../templates/misc/motd_{{ course_abbr }}.txt
        dest: /etc/motd
        owner: root
        group: root

@@ -25,11 +25,11 @@
    - name: php configuration (apache2)
      copy: 
         src: ../templates/php/30-webdb.ini
-        dest: /etc/php/7.3/apache2/conf.d/30-webdb.ini
+        dest: /etc/php/7.3/apache2/conf.d/30-{{ course_abbr }}.ini
    - name: php configuration (cli)
      copy: 
         src: ../templates/php/30-webdb.ini
-        dest: /etc/php/7.3/cli/conf.d/30-webdb.ini
+        dest: /etc/php/7.3/cli/conf.d/30-{{ course_abbr }}.ini
 
    - name: php apache-mod configuration
      copy:
@@ -38,7 +38,7 @@
 
    - name: copy homepage
      copy:
-        src: ../templates/apache/webdb.html
+        src: ../templates/apache/{{ course_abbr }}.html
         dest: /var/www/html/index.html
 
    - name: enable rewrite module
@@ -51,10 +51,10 @@
    - name: copy apache configuration
      copy:
        src: ../templates/apache/webdb.conf
-       dest: /etc/apache2/conf-available/webdb.conf
+       dest: /etc/apache2/conf-available/{{ course_abbr }}.conf
 
    - name: enable apache configuration
-     command: a2enconf webdb
+     command: a2enconf {{ course_abbr }}
      notify:
        - restart apache2
 

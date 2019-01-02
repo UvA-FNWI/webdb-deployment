@@ -27,7 +27,7 @@
    - name: 'Configure MySQL server'
      copy: 
        src: ../templates/mysql/webdb.cnf
-       dest: /etc/mysql/mysql.conf.d/webdb.cnf
+       dest: /etc/mysql/mysql.conf.d/{{ course_abbr }}.cnf
      notify:
        - restart mysql
 

@@ -1,0 +1,6 @@
+[DEFAULT]
+bantime = 60
+
+[sshd]
+enabled = true
+maxretry = 5

@@ -47,6 +47,8 @@
    - name: enable userdir module
      apache2_module: name=userdir state=present
 
+   - name: enable headers module
+     apache2_module: name=headers state=present
 
    - name: copy apache configuration
      copy:

@@ -1,0 +1,20 @@
+---
+- hosts: test:webai:!configured
+  tasks:
+
+   - name: Install vsftpd
+     apt:
+       name: vsftpd
+       state: latest
+
+   - name: Copy vsftpd configuration file
+     template: 
+       src: ../templates/vsftpd/vsftpd.conf.j2
+       dest: /etc/vsftpd.conf
+     notify:
+       - restart vsftpd
+
+  handlers:
+   - name: restart vsftpd
+     service: name=vsftpd state=restarted
+

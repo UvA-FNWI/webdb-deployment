@@ -1,0 +1,22 @@
+---
+- hosts: test:webai:!configured
+  tasks:  
+
+   - name: remove existing ssh_host keys
+     file: path={{ item }} state=absent
+     with_items:
+      - "/etc/ssh/ssh_host_rsa_key"
+      - "/etc/ssh/ssh_host_rsa_key.pub"
+      - "/etc/ssh/ssh_host_ed25519_key"
+      - "/etc/ssh/ssh_host_ed25519_key.pub"
+      - "/etc/ssh/ssh_host_ecdsa_key"
+      - "/etc/ssh/ssh_host_ecdsa_key.pub"
+
+   - name: regenerate ssh-hostkeys
+     command: dpkg-reconfigure openssh-server
+     notify:
+        - restart ssh
+
+  handlers:
+   - name: restart ssh
+     service: name=ssh state=restarted

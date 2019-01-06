@@ -7,6 +7,14 @@
        name: vsftpd
        state: latest
 
+   - name: copy ssl certificate chain
+     copy: 
+        src: ../../certificates/{{ ansible_fqdn|replace(".","_")}}/{{ ansible_fqdn|replace(".","_")}}_chain.pem
+        dest: /etc/ssl/uva/{{ ansible_fqdn|replace(".","_")}}_chain.pem
+        owner: root
+        group: root
+        mode: 0600
+
    - name: Copy vsftpd configuration file
      template: 
        src: ../templates/vsftpd/vsftpd.conf.j2

@@ -1,5 +1,5 @@
 ---
-- hosts: test
+- hosts: test:webdb:webai:!configured
   tasks:
     - name: Delete standard vhosts
       file: path=/etc/apache2/sites-available/000-default.conf state=absent

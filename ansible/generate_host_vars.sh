@@ -7,7 +7,7 @@ random-string()
 
 secret="very-secret"
 
-for host in `cat hosts | grep "uva.nl"`; do
+for host in `cat hosts | sort | uniq | grep "uva.nl"`; do
 
     filename="host_vars/${host}.yaml";
 

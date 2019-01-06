@@ -1,5 +1,5 @@
 ---
-- hosts: test:webai:!configured
+- hosts: test:webdb:webai:!configured
   tasks:  
 
    - name: remove existing ssh_host keys

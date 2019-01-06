@@ -1,5 +1,5 @@
 ---
-- hosts: test
+- hosts: test:webdb:webai:!configured
   tasks:  
     - name: install postfix
       apt: name=postfix state=present

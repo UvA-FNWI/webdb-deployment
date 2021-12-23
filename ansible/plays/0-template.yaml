@@ -17,4 +17,5 @@
          - whois
          - net-tools
          - dnsutils
+         - iptables-persistent
        state: latest

@@ -1,0 +1,27 @@
+#NOTE: This play needs to be run at the very end, because it blocks incoming traffic from device
+#      outside of the UvA network, and thus external servers like this one
+---
+- hosts: test:webdb:webai:!configured
+  tasks:
+          - name: Install persistent iptables
+            apt:
+                    name: iptables-persistent
+                    state: present
+
+          - name: Copy firewall configuration
+            copy:
+                    src: ../templates/iptables/rules.v4
+                    dest: /etc/iptables/rules.v4
+
+          - name: Stop fail2ban service
+            service:
+                    name: fail2ban
+                    state: stopped
+
+          - name: Load new firewall IPv4 rules
+            shell: iptables-restore < /etc/iptables/rules.v4
+
+          - name: Start fail2ban service
+            service:
+                    name: fail2ban
+                    state: started

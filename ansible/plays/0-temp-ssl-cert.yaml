@@ -1,0 +1,26 @@
+# NOTE: Use this configuration only as a placeholder for the SSL certificate.
+---
+- hosts: webdb:!configured
+  tasks:
+          - name: Stop Apache service
+            service:
+                    name: apache2
+                    state: stopped
+          
+          - name: Enable apache ssl module
+            shell: a2enmod ssl
+            args:
+                    executable: /bin/bash
+
+          - name: Generate temporary self signed OpenSSL certificate
+            shell: openssl req -x509 -nodes -days 180 -newkey rsa:2048 -subj '//CN={{ansible_fqdn.split(".")[0]}}\\O=Universiteit van Amsterdam\\C=NL' -keyout /etc/ssl/uva/{{ ansible_fqdn|replace(".","_") }}.key -out /etc/ssl/uva/{{ ansible_fqdn|replace(".","_") }}.crt
+            args:
+                    executable: /bin/bash
+
+          - name: Copy virtual host file
+            template: src=../templates/apache/site.conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn|replace(".","_") }}.conf
+            
+          - name: Start Apache service
+            service:
+                    name: apache2
+                    state: started

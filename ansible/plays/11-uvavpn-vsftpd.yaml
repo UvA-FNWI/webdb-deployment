@@ -1,0 +1,32 @@
+---
+- hosts: webdb:!configured
+  tasks:
+   - name: Copy hosts.deny
+     copy:
+             src: ../templates/hosts.deny
+             dest: /etc/hosts.deny
+             owner: root
+             group: root
+             mode: '0644'
+
+   - name: Copy hosts.allow
+     copy:
+             src: ../templates/hosts.allow
+             dest: /etc/hosts.allow
+             owner: root
+             group: root
+             mode: '0644'
+
+   - name: Enable tcp wrappers for vsftpd
+     become: yes
+     become_user: root
+     lineinfile:
+             path: /etc/vsftpd.conf
+             line: "tcp_wrappers=YES"
+             state: present
+             backup: yes
+
+   - name: Restart vsftpd service
+     service:
+             name: vsftpd
+             state: restarted
